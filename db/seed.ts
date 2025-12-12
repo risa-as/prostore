@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import sampleData from "./sample-data";
+// import { prisma } from "./prisma-db";
 import { prisma } from "./prisma";
 
 async function main() {
