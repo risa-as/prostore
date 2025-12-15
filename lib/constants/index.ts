@@ -4,5 +4,11 @@ export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhos
 export const LATEST_PRODUCTS_LIMIT = Number(process.env.NEXT_PUBLIC_LATEST_PRODUCTS_LIMIT) || 6;
 export const signInDefaultValues = {
     email: "",
-    password:""
+    password:"",
+}
+export const signUpDefaultValues = {
+    name: "",
+    email: "",
+    password:"",
+    confirmPassword: "",
 }
