@@ -13,13 +13,15 @@ export async function signInWithCredentials(prevState: unknown,
                 email: formData.get("email"),
                 password: formData.get("password")
             })
-            await signIn("credentials", user)
+            await signIn("credentials", {
+                email: user.email,
+                password: user.password,
+                redirectTo: "/"
+            })
 
             return {success: true, message: "Signed in successfully"}
         } catch(error) {
-            if(isRedirectError(error)) {
-                throw error;
-            }
+            if(isRedirectError(error)) throw error
             return {success: false, message: "Invalid email or password"}
         }
 }
