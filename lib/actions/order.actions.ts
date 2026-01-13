@@ -15,7 +15,6 @@ import { Prisma } from "@prisma/client";
 // Create Order and order items
 export async function createOrder() {
   try {
-    alert("Hello");
     const session = await auth();
     if (!session) throw new Error("User not authenticated");
 
@@ -56,7 +55,6 @@ export async function createOrder() {
       taxPrice: cart.taxPrice,
       totalPrice: cart.totalPrice,
     });
-
     // الطريقة الاولى والتي تحتاج ان تقوم بتغيير اعدادات prisma
     // Create a transaction to create order and order items in database
     const insertedOrderId = await prisma.$transaction(async (tx) => {

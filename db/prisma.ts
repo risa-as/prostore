@@ -16,8 +16,8 @@ if (!connectionString) {
 const adapter = new PrismaNeon({
   connectionString,
 });
-  //  طريقة HTTP
-  // const adapter = new PrismaNeonHttp(connectionString, {})
+//  طريقة HTTP
+// const adapter = new PrismaNeonHttp(connectionString, {})
 export const prisma = new PrismaClient({ adapter }).$extends({
   result: {
     product: {
@@ -26,6 +26,7 @@ export const prisma = new PrismaClient({ adapter }).$extends({
           return product.price.toString();
         },
       },
+      // حتى تتوافق الانواع وقفت هذا الكود
       rating: {
         compute(product) {
           return product.rating.toString();

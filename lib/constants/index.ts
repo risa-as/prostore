@@ -42,7 +42,7 @@ export const productDefaultValues = {
   description: "",
   price: "0",
   stock: 0,
-  rating: "0",
+  rating: 0,
   numReviews: "0",
   isFeatured: false,
   banner: null,
@@ -54,7 +54,7 @@ export const USER_ROLES = process.env.USER_ROLES
 
 export const reviewFormDefaultValues = {
   title: "",
-  comment: "",
+  description: "",
   rating: 0,
 };
 

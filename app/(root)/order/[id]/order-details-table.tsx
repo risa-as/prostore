@@ -9,13 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Order } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
 import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import {
   PayPalButtons,
   PayPalScriptProvider,
@@ -27,17 +27,19 @@ import {
   updateOrderToPaidCOD,
   deliverOrder,
 } from "@/lib/actions/order.actions";
+import StripePayment from "./stripe-payment";
+
 const OrderDetailsTable = ({
   order,
   paypalClientId,
   isAdmin,
+  stripeClientSecret,
 }: {
-  order: Order;
+  order: Omit<Order, "paymentResult">;
   paypalClientId: string;
   isAdmin: boolean;
+  stripeClientSecret: string | null;
 }) => {
-  const { toast } = useToast();
-
   const {
     id,
     shippingAddress,
@@ -53,35 +55,42 @@ const OrderDetailsTable = ({
     deliveredAt,
   } = order;
 
+  const { toast } = useToast();
+
   const PrintLoadingState = () => {
     const [{ isPending, isRejected }] = usePayPalScriptReducer();
     let status = "";
+
     if (isPending) {
       status = "Loading PayPal...";
     } else if (isRejected) {
-      status = "Failed to load PayPal";
+      status = "Error Loading PayPal";
     }
     return status;
   };
 
   const handleCreatePayPalOrder = async () => {
     const res = await createPayPalOrder(order.id);
-    toast({
-      variant: res.success ? "default" : "destructive",
-      description: res.message,
-    });
-    return res.data;
-  };
 
-  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-    const res = await approvePayPalOrder(order.id, data);
     if (!res.success) {
       toast({
         variant: "destructive",
         description: res.message,
       });
     }
+
+    return res.data;
   };
+
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+    const res = await approvePayPalOrder(order.id, data);
+
+    toast({
+      variant: res.success ? "default" : "destructive",
+      description: res.message,
+    });
+  };
+
   // Button to mark order as paid
   const MarkAsPaidButton = () => {
     const [isPending, startTransition] = useTransition();
@@ -101,36 +110,40 @@ const OrderDetailsTable = ({
           })
         }
       >
-        {isPending ? "Processing..." : "Mark As Paid"}
+        {isPending ? "processing..." : "Mark As Paid"}
       </Button>
     );
   };
-  // Button To mark order as deliverd
+
+  // Button to mark order as delivered
   const MarkAsDeliveredButton = () => {
     const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
+
     return (
       <Button
         type="button"
-        onClick={() => {
+        disabled={isPending}
+        onClick={() =>
           startTransition(async () => {
             const res = await deliverOrder(order.id);
             toast({
               variant: res.success ? "default" : "destructive",
               description: res.message,
             });
-          });
-        }}
+          })
+        }
       >
-        {isPending ? "Processing..." : "Mark As Delivered"}
+        {isPending ? "processing..." : "Mark As Delivered"}
       </Button>
     );
   };
+
   return (
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
-        <div className="col-span-2 space-y-4 overlow-x-auto">
+        <div className="col-span-2 space-4-y overlow-x-auto">
           <Card>
             <CardContent className="p-4 gap-4">
               <h2 className="text-xl pb-4">Payment Method</h2>
@@ -140,11 +153,11 @@ const OrderDetailsTable = ({
                   Paid at {formatDateTime(paidAt!).dateTime}
                 </Badge>
               ) : (
-                <Badge variant="destructive">Not Paid</Badge>
+                <Badge variant="destructive">Not paid</Badge>
               )}
             </CardContent>
           </Card>
-          <Card>
+          <Card className="my-2">
             <CardContent className="p-4 gap-4">
               <h2 className="text-xl pb-4">Shipping Address</h2>
               <p>{shippingAddress.fullName}</p>
@@ -152,7 +165,6 @@ const OrderDetailsTable = ({
                 {shippingAddress.streetAddress}, {shippingAddress.city}
                 {shippingAddress.postalCode}, {shippingAddress.country}
               </p>
-
               {isDelivered ? (
                 <Badge variant="secondary">
                   Delivered at {formatDateTime(deliveredAt!).dateTime}
@@ -178,7 +190,7 @@ const OrderDetailsTable = ({
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link
-                          href={`/product/${item.slug}`}
+                          href={`/product/{item.slug}`}
                           className="flex items-center"
                         >
                           <Image
@@ -193,8 +205,8 @@ const OrderDetailsTable = ({
                       <TableCell>
                         <span className="px-2">{item.qty}</span>
                       </TableCell>
-                      <TableCell>
-                        <span className="px-2">{item.price}</span>
+                      <TableCell className="text-right">
+                        ${item.price}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -222,6 +234,7 @@ const OrderDetailsTable = ({
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
+
               {/* PayPal Payment */}
               {!isPaid && paymentMethod === "PayPal" && (
                 <div>
@@ -234,13 +247,25 @@ const OrderDetailsTable = ({
                   </PayPalScriptProvider>
                 </div>
               )}
+
+              {/* Stripe Payment */}
+              {!isPaid &&
+                paymentMethod === "Stripe" &&
+                (stripeClientSecret ? (
+                  <StripePayment
+                    priceInCents={Number(order.totalPrice) * 100}
+                    orderId={order.id}
+                    clientSecret={stripeClientSecret}
+                  />
+                ) : (
+                  <div>Preparing Payment...</div>
+                ))}
+
               {/* Cash On Delivery */}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton />
               )}
-              {isAdmin &&
-                !isDelivered &&
-                paymentMethod === "CashOnDelivery" && <MarkAsDeliveredButton />}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>
