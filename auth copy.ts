@@ -6,9 +6,7 @@ import { compareSync } from "bcrypt-ts-edge";
 // import type { NextAuthConfig } from "next-auth";
 import { cookies } from "next/headers";
 // import { NextResponse } from "next/server";
-import { authConfig } from "./auth.config"; // استيراد الإعدادات الخفيفة
-
-// تعريف الإعدادات الكاملة
+import { authConfig } from "./auth.config";
 export const config = {
   pages: {
     signIn: "/sign-in",
@@ -56,7 +54,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    ...authConfig.callbacks, // دمج الـ authorized callback من الملف الخفيف
+    ...authConfig.callbacks,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {
       // Set The User ID From The Token
@@ -77,18 +75,15 @@ export const config = {
         token.id = user.id;
         token.role = user.role;
 
-        if (user && trigger === "signIn") {
-          // if user has no name then use the email
-          if (user.name === "NO_NAME") {
-            token.name = user.email.split("@")[0];
-            // update database to reflect the token name
-            // تنبيه: عمليات قاعدة البيانات هنا تبطئ الأداء
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { name: token.name },
-            });
-          }
+        // if user has no name then use the email
+        if (user.name === "NO_NAME") {
+          token.name = user.email.split("@")[0];
         }
+        // update database to reflect the token name
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { name: token.name },
+        });
         if (trigger === "signIn" || trigger === "signUp") {
           const cookiesObject = await cookies();
           const sessionCartId = cookiesObject.get("sessionCartId")?.value;

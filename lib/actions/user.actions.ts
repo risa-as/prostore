@@ -17,6 +17,7 @@ import { getMyCart } from "./cart.actions";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { redirect } from "next/navigation";
 // Sign In The User with credentials
 export async function signInWithCredentials(
   prevState: unknown,
@@ -27,24 +28,13 @@ export async function signInWithCredentials(
       email: formData.get("email"),
       password: formData.get("password"),
     });
-    // // طريقة الاولى
+    const callbackUrl = (formData.get("callbackUrl") as string) || "/";
     await signIn("credentials", {
       email: user.email,
       password: user.password,
-      redirect: true,
-      callbackUrl: "/",
-      redirectTo: "/",
+      redirect: false,
     });
-    return { success: true, message: "Signed in successfully" };
-    // // طريقة ثانية
-    // const callbackUrl = formData.get("callbackUrl") as string | undefined;
-    // // console.log("Callback URL:", callbackUrl);
-    // await signIn("credentials", {
-    //   email: user.email,
-    //   password: user.password,
-    //   redirect: false,
-    // });
-    // redirect(callbackUrl || "/");
+    redirect(callbackUrl);
   } catch (error) {
     if (isRedirectError(error)) throw error;
     return { success: false, message: "Invalid email or password" };
@@ -73,7 +63,7 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
       password: formData.get("password"),
       confirmPassword: formData.get("confirmPassword"),
     });
-
+    const callbackUrl = (formData.get("callbackUrl") as string) || "/";
     const hashPassword = hashSync(user.password);
 
     await prisma.user.create({
@@ -87,9 +77,9 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
     await signIn("credentials", {
       email: user.email,
       password: user.password,
+      redirect: false,
     });
-    return { success: true, fieldErrors: {}, formError: "" };
-    // ... داخل الدالة
+    redirect(callbackUrl);
   } catch (error) {
     if (isRedirectError(error)) throw error;
     // Use Function From Utils To Handle Error

@@ -1,14 +1,11 @@
-import NextAuth from 'next-auth';
-import { authConfig } from './auth.config';
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
-// 1. تهيئة NextAuth
-const { auth } = NextAuth(authConfig);
+// استخدام export default هو الطريقة الأكثر أماناً لتعريف الميدل وير حالياً
+export default NextAuth(authConfig).auth;
 
-// 2. تصدير الدالة كـ default export وهو ما يبحث عنه Next.js
-export default auth;
-
-// 3. (اختياري لكن مهم جداً) تحديد المسارات التي يجب أن يعمل عليها الميدل وير
-// هذا يمنع الميدل وير من العمل على الصور وملفات الـ static مما يحسن الأداء ويمنع أخطاء
+// يفضل دائماً إضافة matcher لتحديد المسارات التي يجب أن يعمل عليها الميدل وير
+// هذا يمنع تشغيله على ملفات الصور والملفات الثابتة مما يحسن الأداء
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
