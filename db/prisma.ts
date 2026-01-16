@@ -36,58 +36,58 @@ export const prisma = new PrismaClient({ adapter }).$extends({
       itemsPrice: {
         needs: { itemsPrice: true },
         compute(cart) {
-          return cart.itemsPrice ? cart.itemsPrice.toString() : null;
+          return cart.itemsPrice?.toString() ?? "0";
         },
       },
       shippingPrice: {
         needs: { shippingPrice: true },
         compute(cart) {
-          return cart.shippingPrice ? cart.shippingPrice.toString() : null;
+          return cart.shippingPrice?.toString() ?? "0";
         },
       },
       taxPrice: {
         needs: { taxPrice: true },
         compute(cart) {
-          return cart.taxPrice ? cart.taxPrice.toString() : null;
+          return cart.taxPrice?.toString() ?? "0";
         },
       },
       totalPrice: {
         needs: { totalPrice: true },
         compute(cart) {
-          return cart.totalPrice ? cart.totalPrice.toString() : null;
+          return cart.totalPrice?.toString() ?? "0";
         },
       },
     },
     order: {
       itemsPrice: {
         needs: { itemsPrice: true },
-        compute(cart) {
-          return cart.itemsPrice ? cart.itemsPrice.toString() : null;
+        compute(order) {
+          return order.itemsPrice?.toString() ?? "0";
         },
       },
       shippingPrice: {
         needs: { shippingPrice: true },
-        compute(cart) {
-          return cart.shippingPrice ? cart.shippingPrice.toString() : null;
+        compute(order) {
+          return order.shippingPrice?.toString() ?? "0";
         },
       },
       taxPrice: {
         needs: { taxPrice: true },
-        compute(cart) {
-          return cart.taxPrice ? cart.taxPrice.toString() : null;
+        compute(order) {
+          return order.taxPrice?.toString() ?? "0";
         },
       },
       totalPrice: {
         needs: { totalPrice: true },
-        compute(cart) {
-          return cart.totalPrice ? cart.totalPrice.toString() : null;
+        compute(order) {
+          return order.totalPrice?.toString() ?? "0";
         },
       },
     },
     orderItem: {
       price: {
-        compute(cart) {
-          return cart.price.toString();
+        compute(orderItem) {
+          return orderItem.price?.toString() ?? "0";
         },
       },
     },
