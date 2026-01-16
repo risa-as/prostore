@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ProductPrice from "./product-price";
 import { Product } from "@/types";
 import Rating from "./rating";
+import { useTranslations } from "next-intl";
 
 const ProductCard = ({ product }: { product: Product }) => {
+  const t = useTranslations('Product');
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="p-0">
@@ -16,6 +18,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             width={300}
             height={300}
             priority={true}
+            className="aspect-square object-cover rounded-t-lg"
           />
         </Link>
       </CardHeader>
@@ -29,7 +32,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           {product.stock > 0 ? (
             <ProductPrice value={Number(product.price)} />
           ) : (
-            <p className="text-destructive">Out of Stock</p>
+            <p className="text-destructive">{t('outOfStock')}</p>
           )}
         </div>
       </CardContent>

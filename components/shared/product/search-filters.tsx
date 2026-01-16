@@ -1,0 +1,166 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
+interface SearchFiltersProps {
+    categories: { category: string; _count: number }[];
+    prices: { name: string; value: string }[];
+    ratings: number[];
+    translations: {
+        category: string;
+        price: string;
+        customerRatings: string;
+        any: string;
+        starsAndUp: string;
+    };
+}
+
+const SearchFilters = ({
+    categories,
+    prices,
+    ratings,
+    translations,
+}: SearchFiltersProps) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const currentCategory = searchParams.get("category") || "all";
+    const currentPrice = searchParams.get("price") || "all";
+    const currentRating = searchParams.get("rating") || "all";
+
+    const formUrlQuery = (params: Record<string, string | null>) => {
+        const newParams = new URLSearchParams(searchParams.toString());
+
+        Object.entries(params).forEach(([key, value]) => {
+            if (value === null || value === "all") {
+                newParams.delete(key);
+            } else {
+                newParams.set(key, value);
+            }
+        });
+
+        return `/search?${newParams.toString()}`;
+    };
+
+    const handleCategoryChange = (value: string) => {
+        const newValue = currentCategory === value ? "all" : value;
+        router.push(formUrlQuery({ category: newValue, page: "1" }));
+    };
+
+    const handlePriceChange = (value: string) => {
+        const newValue = currentPrice === value ? "all" : value;
+        router.push(formUrlQuery({ price: newValue, page: "1" }));
+    };
+
+    const handleRatingChange = (value: string) => {
+        const newValue = currentRating === value ? "all" : value;
+        router.push(formUrlQuery({ rating: newValue, page: "1" }));
+    };
+
+    return (
+        <div className="filter-links space-y-6">
+            {/* Category Links */}
+            <div>
+                <div className="text-xl mb-2 font-semibold">{translations.category}</div>
+                <ul className="space-y-2">
+                    <li>
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="category-all"
+                                checked={currentCategory === "all"}
+                                onCheckedChange={() => handleCategoryChange("all")}
+                            />
+                            <Label htmlFor="category-all" className="cursor-pointer">
+                                {translations.any}
+                            </Label>
+                        </div>
+                    </li>
+                    {categories.map((x) => (
+                        <li key={x.category}>
+                            <div className="flex items-center gap-2">
+                                <Checkbox
+                                    id={`category-${x.category}`}
+                                    checked={currentCategory === x.category}
+                                    onCheckedChange={() => handleCategoryChange(x.category)}
+                                />
+                                <Label htmlFor={`category-${x.category}`} className="cursor-pointer">
+                                    {x.category}
+                                </Label>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Price Links */}
+            <div>
+                <div className="text-xl mb-2 font-semibold">{translations.price}</div>
+                <ul className="space-y-2">
+                    <li>
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="price-all"
+                                checked={currentPrice === "all"}
+                                onCheckedChange={() => handlePriceChange("all")}
+                            />
+                            <Label htmlFor="price-all" className="cursor-pointer">
+                                {translations.any}
+                            </Label>
+                        </div>
+                    </li>
+                    {prices.map((p) => (
+                        <li key={p.value}>
+                            <div className="flex items-center gap-2">
+                                <Checkbox
+                                    id={`price-${p.value}`}
+                                    checked={currentPrice === p.value}
+                                    onCheckedChange={() => handlePriceChange(p.value)}
+                                />
+                                <Label htmlFor={`price-${p.value}`} className="cursor-pointer">
+                                    {p.name}
+                                </Label>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Rating Links */}
+            <div>
+                <div className="text-xl mb-2 font-semibold">{translations.customerRatings}</div>
+                <ul className="space-y-2">
+                    <li>
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="rating-all"
+                                checked={currentRating === "all"}
+                                onCheckedChange={() => handleRatingChange("all")}
+                            />
+                            <Label htmlFor="rating-all" className="cursor-pointer">
+                                {translations.any}
+                            </Label>
+                        </div>
+                    </li>
+                    {ratings.map((r) => (
+                        <li key={r}>
+                            <div className="flex items-center gap-2">
+                                <Checkbox
+                                    id={`rating-${r}`}
+                                    checked={currentRating === r.toString()}
+                                    onCheckedChange={() => handleRatingChange(r.toString())}
+                                />
+                                <Label htmlFor={`rating-${r}`} className="cursor-pointer">
+                                    {r} {translations.starsAndUp}
+                                </Label>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default SearchFilters;

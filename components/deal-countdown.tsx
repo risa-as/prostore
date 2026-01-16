@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 // Static target date (replace with desired date)
-const TARGET_DATE = new Date("2026-01-16T00:00:00");
+const TARGET_DATE = new Date("2026-01-18T00:00:00");
 
 // Function to calculate the time remaining
 const calculateTimeRemaining = (targetDate: Date) => {
@@ -23,6 +24,8 @@ const calculateTimeRemaining = (targetDate: Date) => {
 };
 
 const DealCountdown = () => {
+  const t = useTranslations('Deal');
+  const tHome = useTranslations('Home');
   const [time, setTime] = useState<ReturnType<typeof calculateTimeRemaining>>(
     () => calculateTimeRemaining(TARGET_DATE)
   );
@@ -49,7 +52,7 @@ const DealCountdown = () => {
     return (
       <section className="grid grid-cols-1 md:grid-cols-2 my-20">
         <div className="flex flex-col gap-2 justify-center">
-          <h3 className="text-3xl font-bold">Loading Countdown...</h3>
+          <h3 className="text-3xl font-bold">{t('loading')}</h3>
         </div>
       </section>
     );
@@ -64,14 +67,14 @@ const DealCountdown = () => {
     return (
       <section className="grid grid-cols-1 md:grid-cols-2 my-20">
         <div className="flex flex-col gap-2 justify-center">
-          <h3 className="text-3xl font-bold">Deal Has Ended</h3>
+          <h3 className="text-3xl font-bold">{t('ended')}</h3>
           <p>
-            This deal is no longer available. Check out our latest promotions!
+            {t('endedDescription')}
           </p>
 
           <div className="text-center">
             <Button asChild>
-              <Link href="/search">View Products</Link>
+              <Link href="/search">{tHome('viewAll')}</Link>
             </Button>
           </div>
         </div>
@@ -90,22 +93,19 @@ const DealCountdown = () => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 my-20">
       <div className="flex flex-col gap-2 justify-center">
-        <h3 className="text-3xl font-bold">Deal Of The Month</h3>
+        <h3 className="text-3xl font-bold">{t('title')}</h3>
         <p>
-          Get ready for a shopping experience like never before with our Deals
-          of the Month! Every purchase comes with exclusive perks and offers,
-          making this month a celebration of savvy choices and amazing deals.
-          Don&apos;t miss out! 🎁🛒
+          {t('description')}
         </p>
         <ul className="grid grid-cols-4">
-          <StatBox label="Days" value={time.days} />
-          <StatBox label="Hours" value={time.hours} />
-          <StatBox label="Minutes" value={time.minutes} />
-          <StatBox label="Seconds" value={time.seconds} />
+          <StatBox label={t('days')} value={time.days} />
+          <StatBox label={t('hours')} value={time.hours} />
+          <StatBox label={t('minutes')} value={time.minutes} />
+          <StatBox label={t('seconds')} value={time.seconds} />
         </ul>
         <div className="text-center">
           <Button asChild>
-            <Link href="/search">View Products</Link>
+            <Link href="/search">{tHome('viewAll')}</Link>
           </Button>
         </div>
       </div>

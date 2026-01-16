@@ -23,13 +23,12 @@ export const prisma = new PrismaClient({ adapter }).$extends({
     product: {
       price: {
         compute(product) {
-          return product.price.toString();
+          return product.price?.toString() ?? "";
         },
       },
-      // حتى تتوافق الانواع وقفت هذا الكود
       rating: {
         compute(product) {
-          return product.rating.toString();
+          return product.rating?.toString() ?? "";
         },
       },
     },
@@ -37,25 +36,25 @@ export const prisma = new PrismaClient({ adapter }).$extends({
       itemsPrice: {
         needs: { itemsPrice: true },
         compute(cart) {
-          return cart.itemsPrice.toString();
+          return cart.itemsPrice ? cart.itemsPrice.toString() : null;
         },
       },
       shippingPrice: {
         needs: { shippingPrice: true },
         compute(cart) {
-          return cart.shippingPrice.toString();
+          return cart.shippingPrice ? cart.shippingPrice.toString() : null;
         },
       },
       taxPrice: {
         needs: { taxPrice: true },
         compute(cart) {
-          return cart.taxPrice.toString();
+          return cart.taxPrice ? cart.taxPrice.toString() : null;
         },
       },
       totalPrice: {
         needs: { totalPrice: true },
         compute(cart) {
-          return cart.totalPrice.toString();
+          return cart.totalPrice ? cart.totalPrice.toString() : null;
         },
       },
     },
@@ -63,25 +62,25 @@ export const prisma = new PrismaClient({ adapter }).$extends({
       itemsPrice: {
         needs: { itemsPrice: true },
         compute(cart) {
-          return cart.itemsPrice.toString();
+          return cart.itemsPrice ? cart.itemsPrice.toString() : null;
         },
       },
       shippingPrice: {
         needs: { shippingPrice: true },
         compute(cart) {
-          return cart.shippingPrice.toString();
+          return cart.shippingPrice ? cart.shippingPrice.toString() : null;
         },
       },
       taxPrice: {
         needs: { taxPrice: true },
         compute(cart) {
-          return cart.taxPrice.toString();
+          return cart.taxPrice ? cart.taxPrice.toString() : null;
         },
       },
       totalPrice: {
         needs: { totalPrice: true },
         compute(cart) {
-          return cart.totalPrice.toString();
+          return cart.totalPrice ? cart.totalPrice.toString() : null;
         },
       },
     },

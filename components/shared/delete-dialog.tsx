@@ -14,6 +14,8 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 
+import { useTranslations } from "next-intl";
+
 const DeleteDialog = ({
   id,
   action,
@@ -24,6 +26,8 @@ const DeleteDialog = ({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const t = useTranslations('Admin');
+
   const handleDeleteClick = () => {
     startTransition(async () => {
       const res = await action(id);
@@ -45,25 +49,25 @@ const DeleteDialog = ({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button size="sm" variant="destructive" className="ml-2">
-          Delete
+          {t('delete')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are You Sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t('deleteConfirm')}</AlertDialogTitle>
           <AlertDialogDescription>
-            This Action Cant Be Undone
+            {t('deleteDescription')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('deleteCancel')}</AlertDialogCancel>
           <Button
             variant="destructive"
             size="sm"
             disabled={isPending}
             onClick={handleDeleteClick}
           >
-            {isPending ? "Deleting..." : "Delete"}
+            {isPending ? t('deleting') : t('delete')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

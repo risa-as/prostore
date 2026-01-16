@@ -29,6 +29,7 @@ import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import { Checkbox } from "../ui/checkbox";
 import { UploadButton } from "@/lib/uploadthing";
+import { useTranslations } from "next-intl";
 
 type ProductFormValues =
   | z.infer<typeof insertProductSchema>
@@ -45,6 +46,7 @@ const ProductForm = ({
 }) => {
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations('AdminProduct');
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(
@@ -116,9 +118,9 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter product name" {...field} />
+                    <Input placeholder={t('placeholderName')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,10 +139,10 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Slug</FormLabel>
+                  <FormLabel>{t('slug')}</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input placeholder="Enter product slug" {...field} />
+                      <Input placeholder={t('placeholderSlug')} {...field} />
                       <Button
                         type="button"
                         className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 mt-2"
@@ -151,7 +153,7 @@ const ProductForm = ({
                           );
                         }}
                       >
-                        Generate
+                        {t('buttonGenerate')}
                       </Button>
                     </div>
                   </FormControl>
@@ -174,9 +176,9 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>{t('category')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter product category" {...field} />
+                    <Input placeholder={t('placeholderCategory')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,9 +197,9 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Brand</FormLabel>
+                  <FormLabel>{t('brand')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter product brand" {...field} />
+                    <Input placeholder={t('placeholderBrand')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -218,9 +220,9 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Price</FormLabel>
+                  <FormLabel>{t('price')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter product price" {...field} />
+                    <Input placeholder={t('placeholderPrice')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -239,9 +241,9 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Stock</FormLabel>
+                  <FormLabel>{t('stock')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter product stock" {...field} />
+                    <Input placeholder={t('placeholderStock')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -255,7 +257,7 @@ const ProductForm = ({
               name="images"
               render={() => (
                 <FormItem className="w-full">
-                  <FormLabel>Images</FormLabel>
+                  <FormLabel>{t('images')}</FormLabel>
                   <Card>
                     <CardContent className="space-y-2 mt-2 min-h-48">
                       <div className="flex-start space-x-2">
@@ -296,7 +298,7 @@ const ProductForm = ({
           </div>
           <div className="upload-field">
             {/* Featured */}
-            Featured Product
+            {t('featuredProduct')}
             <Card>
               <CardContent className="space-y-2 mt-2">
                 <FormField
@@ -310,7 +312,7 @@ const ProductForm = ({
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel>Is Featured?</FormLabel>
+                      <FormLabel>{t('isFeatured')}</FormLabel>
                     </FormItem>
                   )}
                 />
@@ -353,11 +355,11 @@ const ProductForm = ({
                 >;
               }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('description')}</FormLabel>
                   <FormControl>
                     <Textarea
                       className="resize-none"
-                      placeholder="Enter product description"
+                      placeholder={t('placeholderDescription')}
                       {...field}
                     />
                   </FormControl>
@@ -373,7 +375,11 @@ const ProductForm = ({
               disabled={form.formState.isSubmitting}
               className="w-full button col-span-2"
             >
-              {form.formState.isSubmitting ? "Submitting" : `${type} Product`}
+              {form.formState.isSubmitting
+                ? t('buttonSubmitting')
+                : type === "Create"
+                  ? t('buttonCreate')
+                  : t('buttonUpdate')}
             </Button>
           </div>
         </div>

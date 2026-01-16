@@ -10,10 +10,11 @@ import {
 import { getAllCategories } from "@/lib/actions/product.actions";
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const CategoryDrawer = async () => {
   const categories = await getAllCategories();
-
+  const t = await getTranslations("Categories");
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -23,7 +24,7 @@ const CategoryDrawer = async () => {
       </DrawerTrigger>
       <DrawerContent className="h-full max-w-sm">
         <DrawerHeader>
-          <DrawerTitle>Select a Category</DrawerTitle>
+          <DrawerTitle>{t("selectCategory")}</DrawerTitle>
           <div className="space-y-1 mt-4">
             {categories.map((category) => (
               <Button

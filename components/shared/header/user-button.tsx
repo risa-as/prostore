@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { signOutUser } from "@/lib/actions/user.actions";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ const UserButton = async () => {
           <div className="flex items-center">
             <Button
               variant="ghost"
-              className="relativee w-8 h-8 rounded-full ml-2 flex items-center justify-center bg-gray-200"
+              className="relativee w-8 h-8 rounded-full ms-2 flex items-center justify-center bg-gray-200"
             >
               {firstInitial}
             </Button>

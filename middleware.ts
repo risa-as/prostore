@@ -1,11 +1,23 @@
 import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-// استخدام export default هو الطريقة الأكثر أماناً لتعريف الميدل وير حالياً
-export default NextAuth(authConfig).auth;
+const intlMiddleware = createMiddleware(routing);
 
-// يفضل دائماً إضافة matcher لتحديد المسارات التي يجب أن يعمل عليها الميدل وير
-// هذا يمنع تشغيله على ملفات الصور والملفات الثابتة مما يحسن الأداء
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Skip all paths that should not be internationalized
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };
+
+export default NextAuth(authConfig).auth((req) => {
+  const response = intlMiddleware(req);
+
+  // Check for session cart cookie
+  if (!req.cookies.get("sessionCartId")) {
+    const sessionCartId = crypto.randomUUID();
+    response.cookies.set("sessionCartId", sessionCartId);
+  }
+
+  return response;
+});

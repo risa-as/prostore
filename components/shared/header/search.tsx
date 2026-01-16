@@ -9,19 +9,22 @@ import {
 } from "@/components/ui/select";
 import { getAllCategories } from "@/lib/actions/product.actions";
 import { SearchIcon } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 const Search = async () => {
   const categories = await getAllCategories();
+  const t = await getTranslations('Search');
+
   return (
     <form action="/search" method="GET">
       <div className="flex w-full max-w-sm items-center space-x-2">
-        <Select name="category">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All" />
+        <Select name="category" >
+          <SelectTrigger className="w-[180px] ml-2">
+            <SelectValue placeholder={t('all')} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem key="All" value="all">
-              All
+              {t('all')}
             </SelectItem>
             {categories &&
               categories.map((x) => (
@@ -34,7 +37,7 @@ const Search = async () => {
         <Input
           name="q"
           type="text"
-          placeholder="Search..."
+          placeholder={t('placeholder')}
           className="md:w-[100px] lg:w-[300px]"
         />
         <Button>

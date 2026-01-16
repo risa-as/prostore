@@ -1,19 +1,24 @@
 import { Button } from "@/components/ui/button";
 import ModeToggle from "./mode-toggle";
-import {EllipsisVertical, ShoppingCart, UserIcon } from "lucide-react";
-import Link from "next/link";
+import { EllipsisVertical, ShoppingCart, UserIcon } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import UserButton from "./user-button";
+import LanguageSwitcher from "./language-switcher";
+import { useTranslations } from "next-intl";
+
 const Menu = () => {
-    return ( <div>
+    const t = useTranslations();
+    return (<div>
         <nav className="hidden md:flex w-full max-w-xs gap-1">
             <ModeToggle />
+            <LanguageSwitcher />
             <Button asChild variant="ghost">
                 <Link href="/cart">
-                    <ShoppingCart /> Cart
+                    <ShoppingCart /> {t('Menu.cart')}
                 </Link>
             </Button>
-            <UserButton/>
+            <UserButton />
         </nav>
         <nav className="md:hidden">
             <Sheet>
@@ -21,19 +26,20 @@ const Menu = () => {
                     <EllipsisVertical />
                 </SheetTrigger>
                 <SheetContent className="flex flex-col items-start">
-                    <SheetTitle>Menu</SheetTitle>
+                    <SheetTitle>{t('Menu.menu')}</SheetTitle>
                     <ModeToggle />
+                    <LanguageSwitcher />
                     <Button asChild variant="ghost">
                         <Link href="/cart">
-                            <ShoppingCart /> Cart
+                            <ShoppingCart /> {t('Menu.cart')}
                         </Link>
                     </Button>
-                    <UserButton/>
-                    <SheetDescription/>
+                    <UserButton />
+                    <SheetDescription />
                 </SheetContent>
             </Sheet>
         </nav>
-    </div> );
+    </div>);
 }
- 
+
 export default Menu;
